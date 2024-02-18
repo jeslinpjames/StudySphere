@@ -1,0 +1,5 @@
+/* setting up tailwind with daisy ui*/
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
