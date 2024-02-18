@@ -1,11 +1,19 @@
-import { Link, useMatch } from "react-router-dom";
+import { Link, useMatch ,useNavigate} from "react-router-dom";
 
 // to add color on active links
 function DashBoard() {
-    const isActive = (path) => {
-        const match = useMatch(path);
-        return match ? "bg-blue-300" : "";
-      };
+
+  const navigate = useNavigate();
+  function handleLogout() {
+    // Perform any logout-related tasks here (e.g., clearing user data)
+    // Then navigate to the login page
+    navigate('/login');
+  }
+  
+  const isActive = (path) => {
+      const match = useMatch(path);
+      return match ? "bg-blue-300" : "";
+    };
 
 // returns navbar with links and profile
 return(
@@ -21,7 +29,7 @@ return(
 <div className="flex-none gap-2">
   <div className="dropdown dropdown-end">
     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-      <div className="w-10 rounded-full">
+      <div className="w-15 rounded-full border-2 border-stone-300">
         <img alt="Tailwind CSS Navbar component" src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
       </div>
     </div>
@@ -31,7 +39,7 @@ return(
           Profile
         </a>
       </li>
-      <li><a className="hover:bg-blue-300">Logout</a></li>
+      <li><Link className="hover:bg-blue-300" to='/login' onClick={handleLogout}>Logout</Link></li>
     </ul>
   </div>
 </div>
