@@ -3,7 +3,7 @@ import { Route,Routes,useLocation } from 'react-router-dom'
 
 import './App.css'
 import DashBoard from './components/DashBoard'
-import PostCards from './components/PostCards'
+import FlashCard from './components/PostCards/FlashCard'
 import Quiz from './components/Quiz'
 import Notes from './components/Notes'
 import ChatPdf from './components/ChatPdf'
@@ -19,7 +19,7 @@ function App() {
       <Routes>
         {/* routes according to clicked link */}
         {/* <Route path='/' element={<DashBoard/>}/> */}
-        <Route path='/postcards' element={<PostCards/>}/>
+        <Route path='/flashcards' element={<FlashCard/>}/>
         <Route path='/quiz' element={<Quiz/>}/>
         <Route path='/notes' element={<Notes/>}/>
         <Route path='/chatpdf' element={<ChatPdf/>}/>

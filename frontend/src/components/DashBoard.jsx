@@ -21,7 +21,7 @@ return(
 <div className="navbar bg-base-100 pt-3 bg-blue-400 text-black">
 <div className="flex-1">
 <Link className={`btn btn-ghost text-xl hover:bg-blue-300 m-2 ${isActive('/')}`} to="/">Home</Link>
-      <Link className={`btn btn-ghost text-xl hover:bg-blue-300 m-2 ${isActive('/postcards')}`} to="/postcards">Post Cards</Link>
+      <Link className={`btn btn-ghost text-xl hover:bg-blue-300 m-2 ${isActive('/flashcards')}`} to="/flashcards">Post Cards</Link>
       <Link className={`btn btn-ghost text-xl hover:bg-blue-300 m-2 ${isActive('/notes')}`} to="/notes">Notes</Link>
       <Link className={`btn btn-ghost text-xl hover:bg-blue-300 m-2 ${isActive('/quiz')}`} to="/quiz">Quiz</Link>
       <Link className={`btn btn-ghost text-xl hover:bg-blue-300 m-2 ${isActive('/chatpdf')}`} to="/chatpdf">ChatPdf</Link>
