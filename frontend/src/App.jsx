@@ -7,7 +7,8 @@ import FlashCard from "./components/PostCards/FlashCard";
 import Quiz from "./components/Quiz";
 import Notes from "./components/Notes";
 import ChatPdf from "./components/ChatPdf";
-import Login from "./components/Login";
+import Login from "./components/Authentication/Login";
+import Register from "./components/Authentication/Register";
 import FlashCardList from "./components/PostCards/FlashCardList";
 
 function App() {
@@ -16,7 +17,9 @@ function App() {
     <>
       {/* <Login/> */}
       {/* making dashboard visibile only in signed in pages */}
-      {location.pathname !== "/login" && <DashBoard />}
+      {!(
+        location.pathname === "/login" || location.pathname === "/register"
+      ) && <DashBoard />}
       <Routes>
         {/* routes according to clicked link */}
         {/* <Route path='/' element={<DashBoard/>}/> */}
@@ -25,6 +28,7 @@ function App() {
         <Route path="/notes" element={<Notes />} />
         <Route path="/chatpdf" element={<ChatPdf />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/flashcards/:subject" element={<FlashCardList />} />
       </Routes>
     </>
