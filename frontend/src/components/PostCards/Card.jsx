@@ -25,14 +25,19 @@ function Card({ flashcard }) {
 
   return (
     <div
-      className={`card ${flip ? "flip" : ""}`}
+      className={` break-all custom_card ${flip ? "flip" : ""}`}
       style={{ height: height }}
       onClick={() => setFlip(!flip)}
     >
       <div className="front" ref={frontEl}>
+        <h3>Question :</h3>
+        <br />
         {flashcard.question}
       </div>
       <div className="back" ref={backEl}>
+        <h3>Answer :</h3>
+        <br />
+
         {flashcard.answer}
       </div>
     </div>
