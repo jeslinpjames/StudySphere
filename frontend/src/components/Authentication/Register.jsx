@@ -3,29 +3,35 @@ import { Link, useNavigate } from "react-router-dom";
 
 function Register() {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState(""); // Added email state
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [errors, setErrors] = useState({}); // Changed to an object
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   function handleRegister(e) {
-    e.preventDefault(); // Prevent form submission
-    setErrors({}); // Reset errors
+    e.preventDefault();
+    setErrors({});
 
-    // Check if both username, password, and confirmPassword have values
-    if (!username || !password || !confirmPassword) {
+    if (!username || !email || !password || !confirmPassword) {
       setErrors({ ...errors, general: "Please fill in all fields" });
       return;
     }
 
-    // Check if passwords match
+    // Validate email format (you can use a more robust email validation regex)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setErrors({ ...errors, email: "Invalid email format" });
+      return;
+    }
+
     if (password !== confirmPassword) {
       setErrors({ ...errors, confirmPassword: "Passwords do not match" });
       return;
     }
 
-    // Perform user existence check (You should replace this with your actual check)
-    const userExists = false; // Replace with your logic to check if user already exists
+    // Perform user existence check (replace with your logic)
+    const userExists = false;
 
     if (userExists) {
       setErrors({
@@ -37,7 +43,7 @@ function Register() {
 
     // Perform any Register-related tasks here
 
-    // Navigate to the user's dashboard (replace "/dashboard" with the actual path)
+    // Navigate to the user's dashboard
     navigate("/dashboard");
   }
 
@@ -65,6 +71,19 @@ function Register() {
             />
           </div>
           <div className="flex flex-col text-gray-400 py-2">
+            <label>Email</label>
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="rounded-lg bg-gray-700 mt-2 p-2 focus:border-blue-500 focus:bg-gray-800 focus:outline-none"
+              type="email"
+              required
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email}</p>
+            )}
+          </div>
+          <div className="flex flex-col text-gray-400 py-2">
             <label>Password</label>
             <input
               value={password}
@@ -90,7 +109,7 @@ function Register() {
 
           <button
             className="w-full my-5 py-2 bg-teal-500 shadow-lg shadow-teal-500/50 hover:shadow-teal-500/40 text-white font-semibold rounded-lg"
-            type="submit" // Changed to type="submit" to handle form submission
+            type="submit"
           >
             Register
           </button>
