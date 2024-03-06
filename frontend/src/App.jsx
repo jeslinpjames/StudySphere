@@ -4,12 +4,13 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
 import DashBoard from "./components/DashBoard";
 import FlashCard from "./components/PostCards/FlashCard";
-import Quiz from "./components/Quiz";
+import Quiz from "./components/Quiz/Quiz";
 import Notes from "./components/Notes";
 import ChatPdf from "./components/ChatPdf";
 import Login from "./components/Authentication/Login";
 import Register from "./components/Authentication/Register";
 import FlashCardList from "./components/PostCards/FlashCardList";
+import Questions from "./components/Quiz/Questions";
 
 function App() {
   const location = useLocation();
@@ -30,6 +31,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/flashcards/:subject" element={<FlashCardList />} />
+        <Route path="/quiz/:subject" element={<Questions />} />
       </Routes>
     </>
   );
