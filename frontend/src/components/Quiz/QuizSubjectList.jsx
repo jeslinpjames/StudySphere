@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const QuizSubjectList = ({ subjects, flashcards }) => {
+const QuizSubjectList = ({ subjects }) => {
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [newTopicName, setNewTopicName] = useState("");
   const [warning, setWarning] = useState(""); // New state for warning message
@@ -68,9 +68,9 @@ const QuizSubjectList = ({ subjects, flashcards }) => {
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
               onClick={() => {
                 // Clear the newTopicName state and warning before closing the modal
+                document.getElementById("my_modal_3").close();
                 setNewTopicName("");
                 setWarning("");
-                document.getElementById("my_modal_3").close();
               }}
             >
               ✕
