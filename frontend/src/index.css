@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+.container {
+	max-width: 960px;
+	margin-right: auto;
+	margin-left: auto;
+	padding-right: 15px;
+	padding-left: 15px;
+	min-height: 100vh;
+}
+
 .note {
 	background-color: #a5cae3;
 	border-radius: 10px;
