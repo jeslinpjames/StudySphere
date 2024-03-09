@@ -5,7 +5,7 @@ import "./App.css";
 import DashBoard from "./components/DashBoard";
 import FlashCard from "./components/PostCards/FlashCard";
 import Quiz from "./components/Quiz/Quiz";
-import Notes from "./components/Notes";
+import Notes from "./components/Notes/Notes";
 import ChatPdf from "./components/ChatPdf";
 import Login from "./components/Authentication/Login";
 import Register from "./components/Authentication/Register";
