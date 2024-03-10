@@ -46,3 +46,17 @@ textarea {
 	resize: none;
 	background-color: #091716;
 }
+textarea:focus {
+	outline: none;
+}
+.save {
+	background-color: #0954a3;
+	border: none;
+	border-radius: 15px;
+	padding: 5px 10px 5px 10px;
+}
+.save:hover {
+	background-color: #e5e5e6;
+	cursor: pointer;
+}
+

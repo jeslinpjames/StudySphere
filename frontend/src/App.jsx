@@ -35,6 +35,16 @@ function App() {
       date: "22/12/2021",
     },
   ]);
+  const addNote = (text) => {
+    const date = new Date();
+    const newNote = {
+      id: nanoid(),
+      text: text,
+      date: date.toLocaleDateString(),
+    };
+    const newNotes = [...notes, newNote];
+    setNotes(newNotes);
+  }
 
   return (
     <>
@@ -51,7 +61,7 @@ function App() {
         {/* Pass notes state to NotesList component */}
         <Route
           path="/noteslist"
-          element={<NotesList notes={notes} />} // Pass notes state as props
+          element={<NotesList notes={notes} handleAddNote={addNote} />} // Pass notes state as props
         />
         <Route path="/chatpdf" element={<ChatPdf />} />
         <Route path="/login" element={<Login />} />
