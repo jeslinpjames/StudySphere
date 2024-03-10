@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const QuizSubjectList = ({ subjects, flashcards }) => {
+const QuizSubjectList = ({ subjects }) => {
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [newTopicName, setNewTopicName] = useState("");
   const [warning, setWarning] = useState(""); // New state for warning message
@@ -35,7 +35,7 @@ const QuizSubjectList = ({ subjects, flashcards }) => {
 
   //   listing subjects and passing the selected subjects to get flashcards of it
   return (
-    <div className="flex flex-col	">
+    <div className="flex flex-col m-3">
       <h1 className="text-center p-3 text-3xl font-bold ">Topics</h1>
       <div className="card-grid ">
         {subjects.map((subject, index) => (
@@ -68,9 +68,9 @@ const QuizSubjectList = ({ subjects, flashcards }) => {
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
               onClick={() => {
                 // Clear the newTopicName state and warning before closing the modal
+                document.getElementById("my_modal_3").close();
                 setNewTopicName("");
                 setWarning("");
-                document.getElementById("my_modal_3").close();
               }}
             >
               ✕
