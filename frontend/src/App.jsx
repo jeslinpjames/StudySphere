@@ -8,6 +8,7 @@ import FlashCard from "./components/PostCards/FlashCard";
 import Quiz from "./components/Quiz/Quiz";
 import Notes from "./components/Notes/Notes";
 import NotesList from "./components/Notes/NotesList";
+import Search from "./components/Notes/Search";
 import ChatPdf from "./components/ChatPdf";
 import Login from "./components/Authentication/Login";
 import Register from "./components/Authentication/Register";
@@ -35,6 +36,7 @@ function App() {
       date: "22/12/2021",
     },
   ]);
+  const [searchText, setSearchText] = useState("");
   const addNote = (text) => {
     const date = new Date();
     const newNote = {
@@ -56,16 +58,17 @@ function App() {
       {!(location.pathname === "/login" || location.pathname === "/register") && (
         <DashBoard />
       )}
-
+      <Search handleSearchNote={setSearchText}/>
       <Routes>
         {/* Routes */}
         <Route path="/flashcards" element={<FlashCard />} />
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/notes" element={<Notes />} />
-        {/* Pass notes state to NotesList component */}
         <Route
           path="/noteslist"
-          element={<NotesList notes={notes} handleAddNote={addNote} handleDeleteNote ={deleteNote} />} // Pass notes state as props
+          element={<NotesList notes={notes.filter((note) => note.text.toLowerCase().includes(searchText.toLowerCase()))} 
+          handleAddNote={addNote}
+          handleDeleteNote ={deleteNote} />} // Pass notes state as props
         />
         <Route path="/chatpdf" element={<ChatPdf />} />
         <Route path="/login" element={<Login />} />
