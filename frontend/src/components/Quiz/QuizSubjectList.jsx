@@ -35,7 +35,7 @@ const QuizSubjectList = ({ subjects }) => {
 
   //   listing subjects and passing the selected subjects to get flashcards of it
   return (
-    <div className="flex flex-col	">
+    <div className="flex flex-col m-3">
       <h1 className="text-center p-3 text-3xl font-bold ">Topics</h1>
       <div className="card-grid ">
         {subjects.map((subject, index) => (
