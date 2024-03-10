@@ -44,7 +44,11 @@ function App() {
     };
     const newNotes = [...notes, newNote];
     setNotes(newNotes);
-  }
+  };
+  const deleteNote = (id) => {
+    const newNotes = notes.filter((note) => note.id !== id);
+    setNotes(newNotes);
+  };
 
   return (
     <>
@@ -61,7 +65,7 @@ function App() {
         {/* Pass notes state to NotesList component */}
         <Route
           path="/noteslist"
-          element={<NotesList notes={notes} handleAddNote={addNote} />} // Pass notes state as props
+          element={<NotesList notes={notes} handleAddNote={addNote} handleDeleteNote ={deleteNote} />} // Pass notes state as props
         />
         <Route path="/chatpdf" element={<ChatPdf />} />
         <Route path="/login" element={<Login />} />
