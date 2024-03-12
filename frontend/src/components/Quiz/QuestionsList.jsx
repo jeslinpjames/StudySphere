@@ -1,9 +1,10 @@
 import React from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const QuestionsList = () => {
   const { subject } = useParams();
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newQuestion, setNewQuestion] = useState("");
   const [newAnswer, setNewAnswer] = useState("");
@@ -81,11 +82,17 @@ const QuestionsList = () => {
   // const questions =
   const filteredQuestions = questions;
 
+  const handleStart = () => {
+    navigate(`/quiz/${subject}/${filteredQuestions[0].questionId}`);
+  };
+
   return (
     <div className="flex flex-col justify-center items-center m-5 gap-5">
       <h1>{subject}</h1>
       <div className="flex justify-center items-center m-5 gap-5">
-        <button className="btn btn-error">Start</button>
+        <button className="btn btn-error" onClick={handleStart}>
+          Start
+        </button>
         <div className="flex gap-3">
           <input
             type="text"
