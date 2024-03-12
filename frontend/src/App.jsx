@@ -13,7 +13,7 @@ import ChatPdf from "./components/ChatPdf";
 import Login from "./components/Authentication/Login";
 import Register from "./components/Authentication/Register";
 import FlashCardList from "./components/PostCards/FlashCardList";
-import Questions from "./components/Quiz/Questions";
+import QuestionsList from "./components/Quiz/QuestionsList";
 
 function App() {
   const location = useLocation();
@@ -74,7 +74,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/flashcards/:subject" element={<FlashCardList />} />
-        <Route path="/quiz/:subject" element={<Questions />} />
+        <Route path="/quiz/:subject" element={<QuestionsList />} />
+        <Route path="/quiz/:subject/:qn_id" element={<Question />} />
       </Routes>
     </>
   );
