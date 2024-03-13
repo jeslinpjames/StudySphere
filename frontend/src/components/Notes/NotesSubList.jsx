@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const QuizSubjectList = ({ subjects }) => {
+const NotesSubList = ({ subjects }) => {
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [newTopicName, setNewTopicName] = useState("");
   const [warning, setWarning] = useState(""); // New state for warning message
@@ -30,19 +30,19 @@ const QuizSubjectList = ({ subjects }) => {
     subjects.push(newSubject);
 
     // Redirect to the new page with the subject name
-    navigate(`/quiz/${newSubject.name}`);
+    navigate(`/notes/${newSubject.name}`);
   };
 
   //   listing subjects and passing the selected subjects to get flashcards of it
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col	">
       <h1 className="text-center p-3 text-3xl font-bold ">Topics</h1>
       <div className="card-grid ">
         {subjects.map((subject, index) => (
           <Link
             key={index}
             className="bg-sky-200 cursor-pointer text-black p-5 rounded-md	"
-            to={`/quiz/${subject.name}`}
+            to={`/notes/${subject.name}`}
             onClick={() => setSelectedSubject(subject)}
           >
             {subject.name}
@@ -68,9 +68,9 @@ const QuizSubjectList = ({ subjects }) => {
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
               onClick={() => {
                 // Clear the newTopicName state and warning before closing the modal
-                document.getElementById("my_modal_3").close();
                 setNewTopicName("");
                 setWarning("");
+                document.getElementById("my_modal_3").close();
               }}
             >
               ✕
@@ -99,4 +99,4 @@ const QuizSubjectList = ({ subjects }) => {
   );
 };
 
-export default QuizSubjectList;
+export default NotesSubList;

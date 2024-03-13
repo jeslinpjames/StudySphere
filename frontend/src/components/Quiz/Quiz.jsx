@@ -5,10 +5,10 @@ function Quiz() {
   const [subjects, setSubjects] = useState(sampleSubjects);
 
   return (
-    <>
+    <div className="m-5">
       {/* <h1>Quiz</h1> */}
       <QuizSubjectList subjects={subjects} />
-    </>
+    </div>
   );
 }
 const sampleSubjects = [
