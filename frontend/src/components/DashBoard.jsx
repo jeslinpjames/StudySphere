@@ -78,7 +78,9 @@ function DashBoard() {
               className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 bg-blue-400 text-black border-2 border-stone-300	"
             >
               <li>
-                <a className="hover:bg-blue-300">Profile</a>
+              <Link className="hover:bg-blue-300" to="/profile">
+                  Profile
+                </Link>
               </li>
               <li>
                 <Link
