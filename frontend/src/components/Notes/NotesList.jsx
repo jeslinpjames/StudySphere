@@ -128,35 +128,37 @@ const NotesList = () => {
             handleOpenEditModal={handleOpenEditModal}
           />
         ))}
+
         {isModalOpen && (
-          <div className="modal modal-open">
-            <div className="modal-box max-w-lg rounded-lg shadow-lg">
-              <h3 className="font-semibold text-xl mb-4 border-b-2 border-gray-300 pb-2">
+          <div className=" modal modal-open backdrop-blur-sm">
+            <div className="modal-box bg-slate-300 p-6 rounded-lg shadow-lg text-black">
+              <h3 className="font-bold text-lg">
                 {editingNote ? "Edit Note" : "Add New Note"}
               </h3>
-              <div className="form-control mb-4">
-                <label className="label">
-                  <span className="label-text font-medium">Heading</span>
+              <div className="form-control">
+                <label className="label ">
+                  <span className="label-text text-black">Heading</span>
                 </label>
                 <input
                   type="text"
                   placeholder="Enter heading"
-                  className="input input-bordered rounded-md"
+                  className="input input-bordered text-white	"
                   value={newHeading}
                   onChange={(e) => setNewHeading(e.target.value)}
                 />
               </div>
-              <div className="form-control mb-4">
-                <label className="label">
-                  <span className="label-text font-medium">Note</span>
+              <div className="form-control">
+                <label className="label ">
+                  <span className="label-text text-black">Note</span>
                 </label>
                 <textarea
                   placeholder="Enter note"
-                  className="textarea textarea-bordered w-full max-w-xl border border-gray-300 rounded-md resize-none h-64 overflow-y-auto font-sans"
+                  className="textarea textarea-bordered w-full max-w-xl border-white resize-none h-64 overflow-y-auto text-white	"
                   value={newText}
                   onChange={(e) => setNewText(e.target.value)}
                 ></textarea>
               </div>
+
               <div className="modal-action">
                 <button
                   type="button"
