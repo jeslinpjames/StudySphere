@@ -128,32 +128,31 @@ const NotesList = () => {
             handleOpenEditModal={handleOpenEditModal}
           />
         ))}
-
         {isModalOpen && (
           <div className="modal modal-open">
-            <div className="modal-box">
-              <h3 className="font-bold text-lg">
+            <div className="modal-box max-w-lg rounded-lg shadow-lg">
+              <h3 className="font-semibold text-xl mb-4 border-b-2 border-gray-300 pb-2">
                 {editingNote ? "Edit Note" : "Add New Note"}
               </h3>
-              <div className="form-control">
+              <div className="form-control mb-4">
                 <label className="label">
-                  <span className="label-text ">Heading</span>
+                  <span className="label-text font-medium">Heading</span>
                 </label>
                 <input
                   type="text"
                   placeholder="Enter heading"
-                  className="input input-bordered"
+                  className="input input-bordered rounded-md"
                   value={newHeading}
                   onChange={(e) => setNewHeading(e.target.value)}
                 />
               </div>
-              <div className="form-control">
+              <div className="form-control mb-4">
                 <label className="label">
-                  <span className="label-text">Note</span>
+                  <span className="label-text font-medium">Note</span>
                 </label>
                 <textarea
                   placeholder="Enter note"
-                  className="textarea textarea-bordered textarea-sm w-full max-w-xl"
+                  className="textarea textarea-bordered w-full max-w-xl border border-gray-300 rounded-md resize-none h-64 overflow-y-auto font-sans"
                   value={newText}
                   onChange={(e) => setNewText(e.target.value)}
                 ></textarea>
