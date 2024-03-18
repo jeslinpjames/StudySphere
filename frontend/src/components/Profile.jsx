@@ -4,11 +4,14 @@ function Profile() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isEditing, setIsEditing] = useState(false);
 
   const handleSave = () => {
     // Implement your save logic here
+    // You can add validation to check if password and confirmPassword match
     setIsEditing(false);
+    setConfirmPassword(''); // Reset confirmPassword state
   };
 
   return (
@@ -62,9 +65,26 @@ function Profile() {
                 className="w-full border border-gray-300 rounded-md p-2"
               />
             </div>
+            {isEditing && (
+              <div className="mb-4">
+                <label htmlFor="confirmPassword" className="block font-bold mb-2">
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md p-2"
+                />
+              </div>
+            )}
             <div className="flex justify-end">
               <button
-                onClick={() => setIsEditing(!isEditing)}
+                onClick={() => {
+                  setIsEditing(!isEditing);
+                  if (!isEditing) setConfirmPassword('');
+                }}
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
               >
                 {isEditing ? 'Cancel' : 'Edit'}
