@@ -6,12 +6,21 @@ function Profile() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [passwordMatch, setPasswordMatch] = useState(true);
 
   const handleSave = () => {
     // Implement your save logic here
-    // You can add validation to check if password and confirmPassword match
-    setIsEditing(false);
-    setConfirmPassword(''); // Reset confirmPassword state
+
+    // Check if passwords match
+    if (password === confirmPassword) {
+      // Save logic here
+      console.log('Saving changes:', { name, email, password });
+      setIsEditing(false);
+      setConfirmPassword('');
+      setPasswordMatch(true);
+    } else {
+      setPasswordMatch(false);
+    }
   };
 
   return (
@@ -77,13 +86,19 @@ function Profile() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="w-full border border-gray-300 rounded-md p-2"
                 />
+                {!passwordMatch && (
+                  <p className="text-red-500 mt-2">Passwords do not match.</p>
+                )}
               </div>
             )}
             <div className="flex justify-end">
               <button
                 onClick={() => {
                   setIsEditing(!isEditing);
-                  if (!isEditing) setConfirmPassword('');
+                  if (!isEditing) {
+                    setConfirmPassword('');
+                    setPasswordMatch(true);
+                  }
                 }}
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
               >
