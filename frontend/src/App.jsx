@@ -7,6 +7,7 @@ import Quiz from "./components/Quiz/Quiz";
 import Notes from "./components/Notes/Notes";
 import NotesList from "./components/Notes/NotesList";
 import ChatPdf from "./components/ChatPdf";
+import Profile from "./components/Profile";
 import Login from "./components/Authentication/Login";
 import Register from "./components/Authentication/Register";
 import FlashCardList from "./components/PostCards/FlashCardList";
@@ -29,6 +30,7 @@ function App() {
         <Route path="/notes" element={<Notes />} />
         <Route path="/notes/:subject" element={<NotesList />} />
         <Route path="/chatpdf" element={<ChatPdf />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/flashcards/:subject" element={<FlashCardList />} />
