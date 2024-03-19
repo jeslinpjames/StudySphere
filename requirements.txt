@@ -1,0 +1,6 @@
+langchain
+sentence_transformers
+faiss-cpu
+unstructured
+azure-storage-blob
+unstructured[pdf]
