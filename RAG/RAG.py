@@ -155,7 +155,7 @@ def addPDFtoVectorDB(filepath,vectorDBpath,model='all-MiniLM-L6-v2' ):
 
 
 if __name__ == '__main__':
-    load_dotenv()
+  load_dotenv()
   account_name = os.getenv('account_name')
   account_key = os.getenv('account_key')
   container_name = os.getenv('container_name')
