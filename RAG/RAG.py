@@ -29,7 +29,7 @@ def getEmbeddings(text,model_name='all-MiniLM-L6-v2'):
 
 
 # Function to embed and store chunks in vector database
-def embed_and_store_chunks(folder_path):
+def addPDFstoVectorDB(folder_path):
     # Initialize the SentenceTransformer model
     model = SentenceTransformer('all-MiniLM-L6-v2').to(device)
 
@@ -153,7 +153,29 @@ def addPDFtoVectorDB(filepath,vectorDBpath,model='all-MiniLM-L6-v2' ):
       vector_db.add_embeddings(list(zip([doc.page_content for doc in doc_chunks], embeddings)), metadatas=metadatax, ids=idx)
       upload_folder_to_blob(account_name, account_key, container_name, vectorDBpath, "faiss_index")
 
+def create_vector_db_if_not_exists(user_id, chat_id):
+    base_dir = "../VectorDBs/"
+    user_dir = os.path.join(base_dir, user_id)
+    chat_dir = os.path.join(user_dir, chat_id)
+    
+    # Create the user directory if it doesn't exist
+    os.makedirs(user_dir, exist_ok=True)
+    
+    # Create the chat directory if it doesn't exist
+    os.makedirs(chat_dir, exist_ok=True)
+    
+    vector_db_path = os.path.join(chat_dir, "vector_db")
+    
+    # Check if the vector database file exists
+    if not os.path.exists(vector_db_path):
+        model = SentenceTransformer('all-MiniLM-L6-v2')
+        vector_db = FAISS.init_vector_db(vector_db_path, model)
+        return vector_db
+    else:
+        vector_db = FAISS.load_local(vector_db_path)
+        return vector_db
 
+    
 if __name__ == '__main__':
   load_dotenv()
   account_name = os.getenv('account_name')
