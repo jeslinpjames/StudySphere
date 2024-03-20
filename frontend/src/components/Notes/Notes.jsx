@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import NotesSubList from "./NotesSubList";
 
 function Notes() {
+  const [subjects, setSubjects] = useState(sampleSubjects);
+
   return (
     <div className="m-5">
-      <NotesSubList subjects={sampleSubjects} />
+      <NotesSubList subjects={subjects} setSubjects={setSubjects} />
     </div>
   );
 }
+
 const sampleSubjects = [
   {
     name: "english",
@@ -19,4 +22,5 @@ const sampleSubjects = [
     name: "CS",
   },
 ];
+
 export default Notes;

@@ -7,19 +7,24 @@ const QuestionsList = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newQuestion, setNewQuestion] = useState("");
-  const [newAnswer, setNewAnswer] = useState("");
+  const [options, setOptions] = useState(["", "", "", ""]);
+  const [selectedOption, setSelectedOption] = useState(-1);
+  const [editingQuestion, setEditingQuestion] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [questions, setQuestions] = useState([
     {
       subject: "Math",
       questionId: 1,
       question: "What is 2 + 2?",
       options: ["2", "3", "4", "5"],
+      answer: 3,
     },
     {
       subject: "Science",
       questionId: 2,
       question: "What is the chemical symbol for Oxygen?",
       options: ["O", "O2", "O3", "O4"],
+      answer: 0,
     },
     {
       subject: "History",
@@ -31,12 +36,14 @@ const QuestionsList = () => {
         "Abraham Lincoln",
         "John F. Kennedy",
       ],
+      answer: 0,
     },
     {
       subject: "English",
       questionId: 4,
       question: "What is the capital of France?",
       options: ["Paris", "London", "Berlin", "Madrid"],
+      answer: 0,
     },
     {
       subject: "Geography",
@@ -48,42 +55,85 @@ const QuestionsList = () => {
         "Indian Ocean",
         "Arctic Ocean",
       ],
+      answer: 0,
     },
   ]);
 
-  // new question handle
-  const handleAddQn = () => {
-    // Check if either question or answer is empty
-    if (!newQuestion || !newAnswer) {
-      // You can show an error message or handle it as needed
-      console.log("Both question and answer are required");
-      return;
-    }
-
-    const newQuiz = {
-      subject: subject,
-      questionId: questions.length + 1,
-      question: newQuestion,
-      // answer: newAnswer,
-      options: [newAnswer], // Add options as needed
-    };
-    console.log(newQuiz);
-    // Update the flashcards state with the new flashcard
-    setQuestions([...questions, newQuiz]);
-
-    // Clear the input fields
-    setNewQuestion("");
-    setNewAnswer("");
-
-    // Close the modal
-    setIsModalOpen(false);
-  };
-
-  // const questions =
-  const filteredQuestions = questions;
+  const [filteredQuestions, setFilteredQuestions] = useState(questions);
 
   const handleStart = () => {
     navigate(`/quiz/${subject}/${filteredQuestions[0].questionId}`);
+  };
+
+  const handleEditQuestion = (question) => {
+    setEditingQuestion(question);
+    setNewQuestion(question.question);
+    setOptions(question.options);
+    setSelectedOption(question.answer);
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteQuestion = (questionId) => {
+    const updatedQuestions = questions.filter(
+      (question) => question.questionId !== questionId
+    );
+    setQuestions(updatedQuestions);
+    setFilteredQuestions(updatedQuestions);
+  };
+
+  const handleSearch = () => {
+    const searchfilteredQuestions = questions.filter((question) =>
+      question.question.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredQuestions(searchfilteredQuestions);
+  };
+
+  // new question handle
+  const handleAddQn = () => {
+    if (
+      newQuestion.trim() === "" ||
+      options.some((option) => option.trim() === "") ||
+      selectedOption === -1
+    ) {
+      return;
+    }
+    if (editingQuestion) {
+      // Update the existing question
+      const updatedQuestions = questions.map((question) => {
+        if (question.questionId === editingQuestion.questionId) {
+          return {
+            ...question,
+            question: newQuestion,
+            options: options,
+            answer: selectedOption,
+          };
+        }
+        return question;
+      });
+      setQuestions(updatedQuestions);
+      setFilteredQuestions(updatedQuestions);
+    } else {
+      // Add a new question
+      const newQuestionId = questions.length + 1;
+      const newQuiz = {
+        subject: subject,
+        question: newQuestion,
+        options: options,
+        answer: selectedOption,
+        questionId: newQuestionId,
+      };
+      setQuestions([...questions, newQuiz]);
+      setFilteredQuestions([...filteredQuestions, newQuiz]);
+    }
+
+    // Clear the input fields
+    setNewQuestion("");
+    setOptions(["", "", "", ""]);
+    setSelectedOption(-1);
+    setEditingQuestion(null);
+
+    // Close the modal
+    setIsModalOpen(false);
   };
 
   return (
@@ -98,10 +148,12 @@ const QuestionsList = () => {
             type="text"
             placeholder="Search questions"
             className="input input-bordered w-full max-w-xs"
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
           <button
             className="btn bg-slate-500 hover:bg-slate-700"
             htmlFor="search"
+            onClick={handleSearch}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -119,21 +171,36 @@ const QuestionsList = () => {
         </div>
         <button
           className="btn btn-success"
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setEditingQuestion(null);
+            setNewQuestion("");
+            setOptions(["", "", "", ""]);
+            setSelectedOption(-1);
+            setIsModalOpen(true);
+          }}
         >
           New question
         </button>
       </div>
-      <div className="flex flex-col	">
-        <div className="card-grid">
+      <div className="flex flex-col">
+        <div className="flex flex-col gap-3">
           {filteredQuestions.map((question, index) => (
-            <Link
+            <div
               key={index}
-              className="bg-sky-200 cursor-pointer text-black p-5 rounded-md"
-              to={`/quiz/${subject}/${question.questionId}`}
+              className="bg-sky-200 cursor-pointer text-black p-5 rounded-md flex justify-between items-center"
+              onClick={() => handleEditQuestion(question)}
             >
-              {question.question}
-            </Link>
+              <span>{question.question}</span>
+              <button
+                className="btn btn-error btn-sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteQuestion(question.questionId);
+                }}
+              >
+                Delete
+              </button>
+            </div>
           ))}
         </div>
       </div>
@@ -141,16 +208,16 @@ const QuestionsList = () => {
       {isModalOpen && (
         <dialog
           id="my_modal_2"
-          className="modal p-5 backdrop-blur-sm	"
+          className="modal p-5 backdrop-blur-sm"
           open
           onClick={() => setIsModalOpen(false)}
         >
           <div
-            className="modal-box bg-zinc-300		"
+            className="modal-box bg-white"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="font-bold text-lg text-center text-slate-950	">
-              Add New Question
+            <h3 className="font-bold text-lg text-center text-slate-950">
+              {editingQuestion ? "Edit Question" : "Add New Question"}
             </h3>
             <div className="py-4 flex flex-col justify-center items-center">
               <textarea
@@ -159,12 +226,31 @@ const QuestionsList = () => {
                 onChange={(e) => setNewQuestion(e.target.value)}
                 className="textarea textarea-bordered textarea-sm w-full max-w-xs m-2"
               ></textarea>
-              <textarea
-                placeholder="Option 1"
-                value={newAnswer}
-                onChange={(e) => setNewAnswer(e.target.value)}
-                className="textarea textarea-bordered textarea-sm w-full max-w-xs"
-              ></textarea>
+              <div className="flex flex-col gap-2">
+                {options.map((option, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="radio"
+                      className="radio radio-accent"
+                      checked={selectedOption === index}
+                      onChange={() => setSelectedOption(index)}
+                    />
+                    <input
+                      placeholder={`Option ${index + 1}`}
+                      value={option}
+                      onChange={(e) =>
+                        setOptions((prevOptions) => {
+                          const newOptions = [...prevOptions];
+                          newOptions[index] = e.target.value;
+                          return newOptions;
+                        })
+                      }
+                      className="input input-bordered input-accent w-full max-w-xs"
+                    ></input>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="flex justify-center items-center space-x-2 flex-col">
@@ -172,7 +258,7 @@ const QuestionsList = () => {
                 onClick={handleAddQn}
                 className="py-2 px-4 bg-teal-500 text-white font-semibold rounded-lg"
               >
-                Add
+                {editingQuestion ? "Update" : "Add"}
               </button>
             </div>
           </div>
