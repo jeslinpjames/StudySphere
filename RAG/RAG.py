@@ -9,6 +9,7 @@ import os
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
 from langchain.vectorstores.faiss import FAISS
+from dotenv import load_dotenv
 import torch
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, ContentSettings
 device = torch.device('cuda'if torch.cuda.is_available() else'cpu')
@@ -154,3 +155,10 @@ def addPDFtoVectorDB(filepath,vectorDBpath,model='all-MiniLM-L6-v2' ):
 
 
 if __name__ == '__main__':
+    load_dotenv()
+  account_name = os.getenv('account_name')
+  account_key = os.getenv('account_key')
+  container_name = os.getenv('container_name')
+  print("Account Name:",account_name)
+  print("Account Key:",account_key)
+  print("Container Name:",container_name)
