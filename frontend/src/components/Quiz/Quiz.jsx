@@ -7,7 +7,7 @@ function Quiz() {
   return (
     <div className="m-5">
       {/* <h1>Quiz</h1> */}
-      <QuizSubjectList subjects={subjects} />
+      <QuizSubjectList subjects={subjects} setSubjects={setSubjects} />
     </div>
   );
 }

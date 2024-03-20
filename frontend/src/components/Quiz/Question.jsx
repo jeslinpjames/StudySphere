@@ -78,7 +78,7 @@ const Question = () => {
     return <div>No question found with ID {qn_id}</div>;
   }
 
-  // Access the first (and only) question in the filteredQuestions array
+  // Access the first/only question in the array
   const question = filteredQuestions[0];
 
   const currentIndex = questions.findIndex(
