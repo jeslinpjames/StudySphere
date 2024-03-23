@@ -6,7 +6,7 @@ import FlashCard from "./components/PostCards/FlashCard";
 import Quiz from "./components/Quiz/Quiz";
 import Notes from "./components/Notes/Notes";
 import NotesList from "./components/Notes/NotesList";
-import ChatPdf from "./components/ChatPdf";
+import ChatPdf from "./components/ChatPDF/ChatPdf";
 import Profile from "./components/Profile";
 import Login from "./components/Authentication/Login";
 import Register from "./components/Authentication/Register";
