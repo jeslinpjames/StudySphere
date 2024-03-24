@@ -318,6 +318,36 @@ def load_vector_db(user_id, chat_id, root_folder="VectorDBs") -> FAISS:
     return vector_db
 
 
+def remove_pdf_embeddings(vectordb, pdf_filename) -> None:
+    """
+    Removes all embeddings associated with a specific PDF from the vector database.
+
+    This function is designed to facilitate the removal of documents from a FAISS vector store that are associated with a given PDF file. It iterates through the documents in the vector database's docstore, identifies those linked to the specified PDF filename, and removes them from both the FAISS index and the docstore. This process ensures that the vector database is updated to reflect the removal of the specified PDF's embeddings, maintaining the integrity and relevance of the data within the database.
+
+    Parameters
+    ----------
+    vectordb : FAISS
+        The FAISS vector database from which to remove embeddings. This should be an instance of a FAISS vector store that has been previously set up and populated with documents.
+    pdf_filename : str
+        The filename of the PDF whose embeddings are to be removed. This string should match the filename metadata associated with the documents in the vector database.
+
+    Returns
+    -------
+    None
+        The function does not return any value.
+
+    Notes
+    -----
+    This function is particularly useful in scenarios where documents associated with a specific PDF need to be removed from the vector database, such as when updating or deleting documents. It aligns with best practices for managing documents within a FAISS vector store, ensuring that the vector database remains accurate and up-to-date.
+    """
+    chunk_ids = []
+
+    for doc_id, doc in vectordb.docstore._dict.items():
+        if doc.metadata.get("filename") == pdf_filename:
+            chunk_ids.append(doc_id)
+    vectordb.delete(chunk_ids)
+
+
 def search_and_return_top_k(query, vectordb, k):
     """
     Performs a similarity search on the given vector database and returns the top-k results.
