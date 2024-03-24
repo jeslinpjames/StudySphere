@@ -314,6 +314,34 @@ def load_vector_db(user_id, chat_id, root_folder="VectorDBs") -> FAISS:
     vector_db = FAISS.load_local(vector_db_path)
     return vector_db
 
+def search_and_return_top_k(query, vectordb, k):
+    """
+    Performs a similarity search on the given vector database and returns the top-k results.
+
+    Parameters
+    ----------
+    query : str
+        The query text to search for.
+    vectordb : FAISS
+        The FAISS vector database to search within.
+    k : int
+        The number of top results to return.
+
+    Returns
+    -------
+    list
+        A list of top-k results, each containing page content and metadata.
+    """
+    query_embedding = getEmbeddings(query)
+    top_k_result = vectordb.similarity_search_by_vector(query_embedding, k)
+    results = []
+    for i in range(k):
+        result = {
+            'page_content': top_k_result[i].page_content,
+            'metadata': top_k_result[i].metadata
+        }
+        results.append(result)
+    return results
 
 if __name__ == "__main__":
     load_dotenv()
