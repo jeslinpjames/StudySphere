@@ -1,20 +1,19 @@
 import React, { useState } from "react";
-import { Viewer, Worker } from "@react-pdf-viewer/core";
+import { Viewer, Worker, SpecialZoomLevel } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
-
-// Import your chat component
-// import ChatComponent from "./ChatComponent";
+import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+import "@react-pdf-viewer/default-layout/lib/styles/index.css";
+import Chat from "./Chat";
 
 const ChatPdf = () => {
   const [pdfs, setPdfs] = useState([]);
   const [selectedPdf, setSelectedPdf] = useState(null);
+  const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
-  // Function to handle file upload
   const handleUpload = (file) => {
     const reader = new FileReader();
     reader.onloadend = () => {
       setPdfs([...pdfs, { url: reader.result, name: file.name }]);
-      // Set the selected PDF if it's the first one or if no PDF is selected
       if (!selectedPdf) {
         setSelectedPdf(reader.result);
       }
@@ -22,11 +21,7 @@ const ChatPdf = () => {
     reader.readAsDataURL(file);
   };
 
-  // Function to handle PDF click
   const handlePdfClick = (pdf) => {
-    console.log(pdf.url);
-    console.log(pdf);
-
     setSelectedPdf(pdf.url);
   };
 
@@ -52,17 +47,23 @@ const ChatPdf = () => {
           />
         </div>
       </div>
-      <div className="flex-1 p-4">
-        {selectedPdf && (
-          <div className="mb-4">
-            <h2 className="text-lg font-semibold">Selected PDF:</h2>
-            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-              <Viewer fileUrl={selectedPdf} />
-            </Worker>
-          </div>
-        )}
-        {/* Add your chat component here */}
-        {/* <ChatComponent /> */}
+      <div className="flex flex-1">
+        <div className="flex-1 p-4">
+          {selectedPdf && (
+            <div className="mb-4 flex flex-col h-full">
+              <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+                <div className="flex-1 border border-gray-300 rounded-md overflow-hidden">
+                  <Viewer
+                    fileUrl={selectedPdf}
+                    plugins={[defaultLayoutPluginInstance]}
+                    defaultScale={SpecialZoomLevel.PageWidth} // Adjust this value to fit the width of the container
+                  />
+                </div>
+              </Worker>
+            </div>
+          )}
+        </div>
+        {selectedPdf && <Chat pdfName={selectedPdf.name} />}
       </div>
     </div>
   );
