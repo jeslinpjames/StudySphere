@@ -8,7 +8,9 @@ import Chat from "./Chat";
 const ChatPdf = () => {
   const [pdfs, setPdfs] = useState([]);
   const [selectedPdf, setSelectedPdf] = useState(null);
-  const defaultLayoutPluginInstance = defaultLayoutPlugin();
+  const defaultLayoutPluginInstance = defaultLayoutPlugin({
+    sidebarTabs: (defaultTabs) => [],
+  });
 
   const handleUpload = (file) => {
     const reader = new FileReader();
@@ -48,7 +50,7 @@ const ChatPdf = () => {
         </div>
       </div>
       <div className="flex flex-1">
-        <div className="flex-1 p-4">
+        <div className="flex-1 pl-1">
           {selectedPdf && (
             <div className="mb-4 flex flex-col h-full">
               <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
