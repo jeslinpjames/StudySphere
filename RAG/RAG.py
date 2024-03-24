@@ -1,7 +1,7 @@
 from unstructured.partition.auto import partition
 from unstructured.chunking.title import chunk_by_title
 from sentence_transformers import SentenceTransformer, util
-import faiss
+# import faiss
 from io import BytesIO
 from typing import Tuple, List
 import numpy as np
@@ -271,9 +271,9 @@ def init_vector_db(
         The initialized FAISS vectorstore.
 
     """
-    model = SentenceTransformer(model_name=model_name)
-    texts = ["..."]
-    text_embeddings = model.encode(texts)
+    model = SentenceTransformer(model_name)
+    text = "..."
+    text_embeddings = model.encode(text)
 
     os.makedirs(root_folder, exist_ok=True)
 
@@ -284,11 +284,35 @@ def init_vector_db(
 
     vector_db_path = os.path.join(chat_folder, "vector_db")
 
-    vectorstore_faiss = FAISS.from_embeddings(text_embeddings, model)
+    vectorstore_faiss = FAISS.from_embeddings([(text,text_embeddings)], model)
 
     vectorstore_faiss.save_local(vector_db_path)
 
     return vectorstore_faiss
+
+from langchain_community.vectorstores import FAISS
+
+def load_vector_db(user_id, chat_id, root_folder="VectorDBs") -> FAISS:
+    """
+    Loads a FAISS vector database from a local directory.
+
+    Parameters
+    ----------
+    user_id : str
+        The unique identifier for the user.
+    chat_id : str
+        The unique identifier for the chat.
+    root_folder : str, optional
+        The root folder where the user and chat directories are located. Default is "VectorDBs".
+
+    Returns
+    -------
+    FAISS
+        The loaded FAISS vectorstore.
+    """
+    vector_db_path = os.path.join(root_folder, user_id, chat_id, "vector_db")
+    vector_db = FAISS.load_local(vector_db_path)
+    return vector_db
 
 
 if __name__ == "__main__":
@@ -301,8 +325,8 @@ if __name__ == "__main__":
     print("Container Name:", container_name)
     user_id = "User_1"
     chat_id = "Chat_1"
-    vectordb = create_vector_db_if_not_exists(user_id, chat_id)
-    pdf_path = "D:\git\StudySphere\DATA\AgileDesignDocument.pdf"
+    vectordb = init_vector_db(user_id, chat_id)
+    pdf_path = "../DATA/AgileDesignDocument.pdf"
     addPDFtoVectorDB(pdf_path, vectordb, user_id, model="all-MiniLM-L6-v2")
     query = "What is StudySphere?"
     query_embedding = getEmbeddings(query)
