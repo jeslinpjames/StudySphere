@@ -1,6 +1,7 @@
 from unstructured.partition.auto import partition
 from unstructured.chunking.title import chunk_by_title
 from sentence_transformers import SentenceTransformer, util
+
 # import faiss
 from io import BytesIO
 from typing import Tuple, List
@@ -284,13 +285,15 @@ def init_vector_db(
 
     vector_db_path = os.path.join(chat_folder, "vector_db")
 
-    vectorstore_faiss = FAISS.from_embeddings([(text,text_embeddings)], model)
+    vectorstore_faiss = FAISS.from_embeddings([(text, text_embeddings)], model)
 
     vectorstore_faiss.save_local(vector_db_path)
 
     return vectorstore_faiss
 
+
 from langchain_community.vectorstores import FAISS
+
 
 def load_vector_db(user_id, chat_id, root_folder="VectorDBs") -> FAISS:
     """
@@ -313,6 +316,7 @@ def load_vector_db(user_id, chat_id, root_folder="VectorDBs") -> FAISS:
     vector_db_path = os.path.join(root_folder, user_id, chat_id, "vector_db")
     vector_db = FAISS.load_local(vector_db_path)
     return vector_db
+
 
 def search_and_return_top_k(query, vectordb, k):
     """
@@ -337,11 +341,12 @@ def search_and_return_top_k(query, vectordb, k):
     results = []
     for i in range(k):
         result = {
-            'page_content': top_k_result[i].page_content,
-            'metadata': top_k_result[i].metadata
+            "page_content": top_k_result[i].page_content,
+            "metadata": top_k_result[i].metadata,
         }
         results.append(result)
     return results
+
 
 if __name__ == "__main__":
     load_dotenv()
