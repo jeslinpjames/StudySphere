@@ -1,48 +1,68 @@
 import React, { useState } from "react";
-import UploadPdf from "./UploadPdf";
-import PdfList from "./PdfList";
+import { Viewer, Worker } from "@react-pdf-viewer/core";
+import "@react-pdf-viewer/core/lib/styles/index.css";
+
+// Import your chat component
+// import ChatComponent from "./ChatComponent";
 
 const ChatPdf = () => {
   const [pdfs, setPdfs] = useState([]);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [selectedPdf, setSelectedPdf] = useState(null);
 
+  // Function to handle file upload
   const handleUpload = (file) => {
-    setPdfs([...pdfs, file]);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPdfs([...pdfs, { url: reader.result, name: file.name }]);
+      // Set the selected PDF if it's the first one or if no PDF is selected
+      if (!selectedPdf) {
+        setSelectedPdf(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+  // Function to handle PDF click
+  const handlePdfClick = (pdf) => {
+    console.log(pdf.url);
+    console.log(pdf);
+
+    setSelectedPdf(pdf.url);
   };
 
   return (
-    <div className="drawer h-screen">
-      <input
-        id="my-drawer"
-        type="checkbox"
-        className="drawer-toggle"
-        checked={sidebarOpen}
-        onChange={toggleSidebar}
-      />
-      <div className="drawer-content flex-1">
-        <h1 className="text-2xl font-bold mb-4">ChatPdf</h1>
-        {/* Add your chat component here */}
-        <label
-          htmlFor="my-drawer"
-          className="btn btn-primary drawer-button ml-auto"
-        >
-          {sidebarOpen ? "Hide Sidebar" : "Show Sidebar"}
-        </label>
+    <div className="flex h-[89vh]">
+      <div className="w-64 bg-gray-100 p-4 flex flex-col">
+        <div className="flex-1 overflow-y-auto">
+          {pdfs.map((pdf, index) => (
+            <div
+              key={index}
+              className="mb-2 p-2 bg-white rounded-md cursor-pointer"
+              onClick={() => handlePdfClick(pdf)}
+            >
+              {pdf.name}
+            </div>
+          ))}
+        </div>
+        <div>
+          <input
+            type="file"
+            accept="application/pdf"
+            onChange={(e) => handleUpload(e.target.files[0])}
+          />
+        </div>
       </div>
-      <div className="drawer-side h-full">
-        <label htmlFor="my-drawer" className="drawer-overlay"></label>
-        <ul className="menu p-4 w-64 bg-base-200 text-base-content flex flex-col h-full">
-          <li className="flex-1 overflow-y-auto">
-            <PdfList pdfs={pdfs} />
-          </li>
-          <li className="mt-auto">
-            <UploadPdf onUpload={handleUpload} />
-          </li>
-        </ul>
+      <div className="flex-1 p-4">
+        {selectedPdf && (
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold">Selected PDF:</h2>
+            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+              <Viewer fileUrl={selectedPdf} />
+            </Worker>
+          </div>
+        )}
+        {/* Add your chat component here */}
+        {/* <ChatComponent /> */}
       </div>
     </div>
   );
