@@ -8,7 +8,7 @@ import numpy as np
 import os
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
-from langchain.vectorstores.faiss import FAISS
+from langchain_community.vectorstores import FAISS 
 from dotenv import load_dotenv
 import torch
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, ContentSettings
@@ -120,11 +120,15 @@ def download_folder_from_blob(account_name, account_key, container_name, remote_
      with open(local_file_path, "wb") as data:
          data.write(blob_client.download_blob().readall())
 
-def addPDFtoVectorDB(filepath,vectorDBpath,model='all-MiniLM-L6-v2' ):
+def addPDFtoVectorDB(filepath,vectorDBpath,user_id,model='all-MiniLM-L6-v2' ):
     model = SentenceTransformer('all-MiniLM-L6-v2')
     doc_chunks = []
-    download_folder_from_blob(account_name, account_key, container_name, "faiss_index", vectorDBpath)
-    vector_db = FAISS.load_local(vectorDBpath,model)
+    try:
+        download_folder_from_blob(account_name, account_key, container_name, "faiss_index", vectorDBpath)
+        vector_db = FAISS.load_local(vectorDBpath,model)
+    except:
+        vector_db = vectorDBpath
+        print("Couldn't download the vectorDB from the blob storage.")
     if filepath.endswith('pdf'):
       filename = os.path.basename(filepath)
       print(filename,"started")
@@ -133,14 +137,14 @@ def addPDFtoVectorDB(filepath,vectorDBpath,model='all-MiniLM-L6-v2' ):
       #   elements = partition(filepath)
       # except Exception as e:
       #   print(f"An error occurred when trying to partition the file: {e,filename}")
-      chunks = chunk_by_title(elements, new_after_n_chars=1500, combine_text_under_n_chars=700)
+      chunks = chunk_by_title(elements, new_after_n_chars=1500, combine_text_under_n_chars=500)
       for i, chunk in enumerate(chunks):
             # Embed the chunk using SentenceTransformer
             chunk_embedding = model.encode(chunk.text)
             page_number = chunk.metadata.page_number
             doc_id = f"{filename}-{i}"
             # Create a Document object for the chunk
-            doc = Document(page_content=chunk.text, embedding=chunk_embedding ,metadata={"page": page_number},id=doc_id)
+            doc = Document(page_content=chunk.text, embedding=chunk_embedding ,metadata={"page": page_number},id=doc_id,user_id=user_id)
             doc.metadata["source"] = f"{doc.metadata['page']}-{doc_id}"
             doc.metadata["filename"] = filename
             doc_chunks.append(doc)
@@ -152,6 +156,55 @@ def addPDFtoVectorDB(filepath,vectorDBpath,model='all-MiniLM-L6-v2' ):
       # Add the embeddings to the vectorstore
       vector_db.add_embeddings(list(zip([doc.page_content for doc in doc_chunks], embeddings)), metadatas=metadatax, ids=idx)
       upload_folder_to_blob(account_name, account_key, container_name, vectorDBpath, "faiss_index")
+
+from sentence_transformers import SentenceTransformer
+from langchain_community.vectorstores import FAISS
+import os
+
+def init_vector_db(user_id, chat_id, root_folder="VectorDBs", model_name='all-MiniLM-L6-v2')->FAISS:
+    """
+    Initializes a vector database for a given user and chat, using the specified SentenceTransformer model.
+
+    This function creates a directory structure based on the user and chat IDs, initializes a SentenceTransformer
+    model with the specified model name, encodes sample texts into embeddings, and then creates a FAISS vectorstore
+    from these embeddings. The vectorstore is saved to a local file within the user and chat directories.
+
+    Parameters
+    ----------
+    user_id : str
+        The unique identifier for the user.
+    chat_id : str
+        The unique identifier for the chat.
+    root_folder : str, optional
+        The root folder where the user and chat directories will be created. Default is "VectorDBs".
+    model_name : str, optional
+        The name of the SentenceTransformer model to use for encoding texts. Default is 'all-MiniLM-L6-v2'.
+
+    Returns
+    -------
+    FAISS
+        The initialized FAISS vectorstore.
+
+    """
+    model = SentenceTransformer(model_name=model_name)
+    texts = ["..."]
+    text_embeddings = model.encode(texts)
+
+    os.makedirs(root_folder, exist_ok=True)
+
+    user_folder = os.path.join(root_folder, user_id)
+    chat_folder = os.path.join(user_folder, chat_id)
+    
+    os.makedirs(chat_folder, exist_ok=True)
+    
+    vector_db_path = os.path.join(chat_folder, "vector_db")
+    
+    vectorstore_faiss = FAISS.from_embeddings(text_embeddings, model)
+    
+    vectorstore_faiss.save_local(vector_db_path)
+    
+    return vectorstore_faiss
+
 
 def create_vector_db_if_not_exists(user_id, chat_id):
     base_dir = "../VectorDBs/"
@@ -177,10 +230,20 @@ def create_vector_db_if_not_exists(user_id, chat_id):
 
     
 if __name__ == '__main__':
-  load_dotenv()
-  account_name = os.getenv('account_name')
-  account_key = os.getenv('account_key')
-  container_name = os.getenv('container_name')
-  print("Account Name:",account_name)
-  print("Account Key:",account_key)
-  print("Container Name:",container_name)
+    load_dotenv()
+    account_name = os.getenv('account_name')
+    account_key = os.getenv('account_key')
+    container_name = os.getenv('container_name')
+    print("Account Name:",account_name)
+    print("Account Key:",account_key)
+    print("Container Name:",container_name)
+    user_id = "User_1"
+    chat_id = "Chat_1"
+    vectordb = create_vector_db_if_not_exists(user_id, chat_id)
+    pdf_path = "D:\git\StudySphere\DATA\AgileDesignDocument.pdf"
+    addPDFtoVectorDB(pdf_path, vectordb,user_id, model='all-MiniLM-L6-v2')
+    query = "What is StudySphere?"
+    query_embedding = getEmbeddings(query)
+    D, I = vectordb.search(query_embedding, k=5)
+    print(I)
+
