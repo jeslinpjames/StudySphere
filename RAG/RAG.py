@@ -90,18 +90,41 @@ def addPDFstoVectorDB(folder_path):
 
 
 def upload_folder_to_blob(
-    account_name, account_key, container_name, local_folder_path, remote_folder_name
-):
-    # Create a connection string
+    account_name: str,
+    account_key: str,
+    container_name: str,
+    local_folder_path: str,
+    remote_folder_name: str,
+) -> None:
+    """
+    Uploads a local folder to Azure Blob Storage, maintaining the directory structure.
+
+    This function connects to Azure Blob Storage using the provided account name and key,
+    iterates through all files in the specified local folder and its subfolders, and uploads
+    each file to the specified remote folder in the Azure Blob Storage container. It ensures
+    that the directory structure is preserved in the blob storage.
+
+    Parameters
+    ----------
+    account_name : str
+        The name of the Azure Storage account.
+    account_key : str
+        The key for the Azure Storage account.
+    container_name : str
+        The name of the container in the Azure Storage account.
+    local_folder_path : str
+        The path to the local folder to be uploaded.
+    remote_folder_name : str
+        The name of the remote folder in the container where the files will be uploaded.
+
+    Returns
+    -------
+    None
+    """
     connect_str = f"DefaultEndpointsProtocol=https;AccountName={account_name};AccountKey={account_key};EndpointSuffix=core.windows.net"
-
-    # Create a BlobServiceClient
     blob_service_client = BlobServiceClient.from_connection_string(connect_str)
-
-    # Get a container client
     container_client = blob_service_client.get_container_client(container_name)
 
-    # Iterate through local files and upload them to Azure Blob Storage
     for root, dirs, files in os.walk(local_folder_path):
         for file_name in files:
             local_file_path = os.path.join(root, file_name)
@@ -109,7 +132,6 @@ def upload_folder_to_blob(
                 remote_folder_name, os.path.relpath(local_file_path, local_folder_path)
             ).replace("\\", "/")
 
-            # Create a BlobClient and upload the file
             blob_client = container_client.get_blob_client(blob_name)
             with open(local_file_path, "rb") as data:
                 blob_client.upload_blob(data, overwrite=True)
@@ -120,33 +142,47 @@ def upload_folder_to_blob(
 
 
 def download_folder_from_blob(
-    account_name, account_key, container_name, remote_folder_name, local_folder_path
-):
-    # Create a connection string
+    account_name: str,
+    account_key: str,
+    container_name: str,
+    remote_folder_name: str,
+    local_folder_path: str,
+) -> None:
+    """
+    Downloads a folder from Azure Blob Storage to a local folder.
+
+    This function connects to Azure Blob Storage using the provided account name and key,
+    lists all blobs within the specified remote folder, and downloads each blob to the
+    specified local folder path. It ensures that the necessary local directories are
+    created before downloading the files.
+
+    Parameters
+    ----------
+    account_name : str
+        The name of the Azure Storage account.
+    account_key : str
+        The key for the Azure Storage account.
+    container_name : str
+        The name of the container in the Azure Storage account.
+    remote_folder_name : str
+        The name of the remote folder in the container from which to download blobs.
+    local_folder_path : str
+        The path to the local folder where the blobs will be downloaded.
+
+    Returns
+    -------
+    None
+    """
     connect_str = f"DefaultEndpointsProtocol=https;AccountName={account_name};AccountKey={account_key};EndpointSuffix=core.windows.net"
-
-    # Create a BlobServiceClient
     blob_service_client = BlobServiceClient.from_connection_string(connect_str)
-
-    # Get a container client
     container_client = blob_service_client.get_container_client(container_name)
-
-    # List blobs in the specified folder
     blob_list = container_client.list_blobs(name_starts_with=remote_folder_name)
 
-    # Download each blob to the local folder
     for blob in blob_list:
         blob_name = blob.name
-
-        # Extract the base file name from the blob name
         base_file_name = os.path.basename(blob_name)
-
         local_file_path = os.path.join(local_folder_path, base_file_name)
-
-        # Create necessary directories
         os.makedirs(os.path.dirname(local_file_path), exist_ok=True)
-
-        # Create a BlobClient and download the file
         blob_client = container_client.get_blob_client(blob_name)
         with open(local_file_path, "wb") as data:
             data.write(blob_client.download_blob().readall())
@@ -208,11 +244,6 @@ def addPDFtoVectorDB(filepath, vectorDBpath, user_id, model="all-MiniLM-L6-v2"):
         )
 
 
-from sentence_transformers import SentenceTransformer
-from langchain_community.vectorstores import FAISS
-import os
-
-
 def init_vector_db(
     user_id, chat_id, root_folder="VectorDBs", model_name="all-MiniLM-L6-v2"
 ) -> FAISS:
@@ -258,29 +289,6 @@ def init_vector_db(
     vectorstore_faiss.save_local(vector_db_path)
 
     return vectorstore_faiss
-
-
-def create_vector_db_if_not_exists(user_id, chat_id):
-    base_dir = "../VectorDBs/"
-    user_dir = os.path.join(base_dir, user_id)
-    chat_dir = os.path.join(user_dir, chat_id)
-
-    # Create the user directory if it doesn't exist
-    os.makedirs(user_dir, exist_ok=True)
-
-    # Create the chat directory if it doesn't exist
-    os.makedirs(chat_dir, exist_ok=True)
-
-    vector_db_path = os.path.join(chat_dir, "vector_db")
-
-    # Check if the vector database file exists
-    if not os.path.exists(vector_db_path):
-        model = SentenceTransformer("all-MiniLM-L6-v2")
-        vector_db = FAISS.init_vector_db(vector_db_path, model)
-        return vector_db
-    else:
-        vector_db = FAISS.load_local(vector_db_path)
-        return vector_db
 
 
 if __name__ == "__main__":
