@@ -1,8 +1,6 @@
 from unstructured.partition.auto import partition
 from unstructured.chunking.title import chunk_by_title
 from sentence_transformers import SentenceTransformer, util
-
-# import faiss
 from io import BytesIO
 from typing import Tuple, List
 import numpy as np
@@ -36,59 +34,68 @@ def getEmbeddings(text, model_name="all-MiniLM-L6-v2"):
     embeddings = model.encode(text)
     return embeddings
 
+def addPDFtoVectorDB(filepath: str, vector_db: FAISS, user_id: str, model: str = "all-MiniLM-L6-v2") -> None:
+    """
+    Adds the content of a PDF file to a vector database, partitioning the PDF into chunks and embedding each chunk.
 
-# Function to embed and store chunks in vector database
-def addPDFstoVectorDB(folder_path):
-    # Initialize the SentenceTransformer model
-    model = SentenceTransformer("all-MiniLM-L6-v2").to(device)
+    This function processes a PDF file, partitions it into chunks based on titles, and then embeds each chunk using a specified SentenceTransformer model. The embeddings are then added to the provided FAISS vector database.
 
-    # Create a list to store Document objects
+    Parameters
+    ----------
+    filepath : str
+        The path to the PDF file to be processed.
+    vector_db : FAISS
+        The FAISS vector database to which the embeddings will be added.
+    user_id : str
+        The unique identifier for the user associated with the PDF file.
+    model : str, optional
+        The name of the SentenceTransformer model to use for embedding. Default is "all-MiniLM-L6-v2".
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    Exception
+        If an error occurs during the partitioning or embedding process.
+
+    Notes
+    -----
+    The function assumes that the PDF file is in a format that can be partitioned into chunks based on titles. It also assumes that the FAISS vector database is properly initialized and ready to receive embeddings.
+    """
+    model = SentenceTransformer(model)
     doc_chunks = []
-    for filename in os.listdir(folder_path):
-        if filename.endswith("pdf"):
-            pdf_path = os.path.join(folder_path, filename)
-            try:
-                elements = partition(pdf_path)
-            except Exception as e:
-                print(
-                    f"An error occurred when trying to partition the file: {e,filename}"
-                )
-                continue
-            chunks = chunk_by_title(
-                elements, new_after_n_chars=1500, combine_text_under_n_chars=500
+    if filepath.endswith("pdf"):
+        filename = os.path.basename(filepath)
+        print(filename, "started")
+        elements = partition(filepath)
+        chunks = chunk_by_title(
+            elements, new_after_n_chars=1500, combine_text_under_n_chars=500
+        )
+        for i, chunk in enumerate(chunks):
+            chunk_embedding = model.encode(chunk.text)
+            page_number = chunk.metadata.page_number
+            doc_id = f"{filename}-{i}"
+            doc = Document(
+                page_content=chunk.text,
+                embedding=chunk_embedding,
+                metadata={"page": page_number},
+                id=doc_id,
+                user_id=user_id,
             )
-            # Embed each chunk and create Document objects
-            for i, chunk in enumerate(chunks):
-                # Embed the chunk using SentenceTransformer
-                chunk_embedding = model.encode(chunk.text)
-                page_number = chunk.metadata.page_number
-                doc_id = f"{filename}-{i}"
-                # Create a Document object for the chunk
-                doc = Document(
-                    page_content=chunk.text,
-                    embedding=chunk_embedding,
-                    metadata={"page": page_number},
-                    id=doc_id,
-                )
-                doc.metadata["source"] = f"{doc.metadata['page']}-{doc_id}"
-                doc.metadata["filename"] = filename
-                doc_chunks.append(doc)
-            print(filename, "complete")
-    metadatax = [
-        doc.metadata for doc in doc_chunks
-    ]  # Extract metadata from each Document
-    idx = [doc.id for doc in doc_chunks]  # Extract ID from each Document
-    # Extract just the embeddings from each Document
-    embeddings = [model.encode(doc.page_content) for doc in doc_chunks]
-    # Stores all encoded embeddings in the vector DB
-    vectorstore_faiss = FAISS.from_embeddings(
-        [(doc.page_content, model.encode(doc.page_content)) for doc in doc_chunks],
-        model,
-        metadatas=metadatax,
-        ids=idx,
-    )
-    return vectorstore_faiss
-
+            doc.metadata["source"] = f"{doc.metadata['page']}-{doc_id}"
+            doc.metadata["filename"] = filename
+            doc_chunks.append(doc)
+        print(filename, "complete")
+        metadatax = [doc.metadata for doc in doc_chunks]
+        idx = [doc.id for doc in doc_chunks]
+        embeddings = [model.encode(doc.page_content) for doc in doc_chunks]
+        vector_db.add_embeddings(
+            list(zip([doc.page_content for doc in doc_chunks], embeddings)),
+            metadatas=metadatax,
+            ids=idx,
+        )
 
 def upload_folder_to_blob(
     account_name: str,
@@ -189,62 +196,6 @@ def download_folder_from_blob(
             data.write(blob_client.download_blob().readall())
 
 
-def addPDFtoVectorDB(filepath, vectorDBpath, user_id, model="all-MiniLM-L6-v2"):
-    model = SentenceTransformer("all-MiniLM-L6-v2")
-    doc_chunks = []
-    try:
-        download_folder_from_blob(
-            account_name, account_key, container_name, "faiss_index", vectorDBpath
-        )
-        vector_db = FAISS.load_local(vectorDBpath, model)
-    except:
-        vector_db = vectorDBpath
-        print("Couldn't download the vectorDB from the blob storage.")
-    if filepath.endswith("pdf"):
-        filename = os.path.basename(filepath)
-        print(filename, "started")
-        elements = partition(filepath)
-        # try:
-        #   elements = partition(filepath)
-        # except Exception as e:
-        #   print(f"An error occurred when trying to partition the file: {e,filename}")
-        chunks = chunk_by_title(
-            elements, new_after_n_chars=1500, combine_text_under_n_chars=500
-        )
-        for i, chunk in enumerate(chunks):
-            # Embed the chunk using SentenceTransformer
-            chunk_embedding = model.encode(chunk.text)
-            page_number = chunk.metadata.page_number
-            doc_id = f"{filename}-{i}"
-            # Create a Document object for the chunk
-            doc = Document(
-                page_content=chunk.text,
-                embedding=chunk_embedding,
-                metadata={"page": page_number},
-                id=doc_id,
-                user_id=user_id,
-            )
-            doc.metadata["source"] = f"{doc.metadata['page']}-{doc_id}"
-            doc.metadata["filename"] = filename
-            doc_chunks.append(doc)
-        print(filename, "complete")
-        metadatax = [
-            doc.metadata for doc in doc_chunks
-        ]  # Extract metadata from each Document
-        idx = [doc.id for doc in doc_chunks]  # Extract ID from each Document
-        # Extract just the embeddings from each Document
-        embeddings = [model.encode(doc.page_content) for doc in doc_chunks]
-        # Add the embeddings to the vectorstore
-        vector_db.add_embeddings(
-            list(zip([doc.page_content for doc in doc_chunks], embeddings)),
-            metadatas=metadatax,
-            ids=idx,
-        )
-        upload_folder_to_blob(
-            account_name, account_key, container_name, vectorDBpath, "faiss_index"
-        )
-
-
 def init_vector_db(
     user_id, chat_id, root_folder="VectorDBs", model_name="all-MiniLM-L6-v2"
 ) -> FAISS:
@@ -290,10 +241,6 @@ def init_vector_db(
     vectorstore_faiss.save_local(vector_db_path)
 
     return vectorstore_faiss
-
-
-from langchain_community.vectorstores import FAISS
-
 
 def load_vector_db(user_id, chat_id, root_folder="VectorDBs") -> FAISS:
     """
@@ -377,7 +324,6 @@ def search_and_return_top_k(query, vectordb, k):
         results.append(result)
     return results
 
-
 if __name__ == "__main__":
     load_dotenv()
     account_name = os.getenv("account_name")
@@ -386,12 +332,18 @@ if __name__ == "__main__":
     print("Account Name:", account_name)
     print("Account Key:", account_key)
     print("Container Name:", container_name)
-    user_id = "User_1"
-    chat_id = "Chat_1"
-    vectordb = init_vector_db(user_id, chat_id)
+
     pdf_path = "../DATA/AgileDesignDocument.pdf"
+    user_id = "User_1" # Unique identifier for the user
+    chat_id = "Chat_1" # Unique identifier for the chat
+    query = "What is StudySphere?" # Query text to search for
+
+    # Initialize the vector database
+    vectordb = init_vector_db(user_id, chat_id)
+
+    # Add the PDF to the vector database
     addPDFtoVectorDB(pdf_path, vectordb, user_id, model="all-MiniLM-L6-v2")
-    query = "What is StudySphere?"
-    query_embedding = getEmbeddings(query)
-    D, I = vectordb.search(query_embedding, k=5)
-    print(I)
+
+    # Perform a similarity search
+    results = search_and_return_top_k(query, vectordb, 5)
+    print(results)
