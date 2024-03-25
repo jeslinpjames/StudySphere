@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios"; // Import Axios
 
 function Register() {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState(""); // Added email state
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-  function handleRegister(e) {
+  async function handleRegister(e) {
     e.preventDefault();
     setErrors({});
 
@@ -18,7 +19,6 @@ function Register() {
       return;
     }
 
-    // Validate email format (you can use a more robust email validation regex)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setErrors({ ...errors, email: "Invalid email format" });
@@ -30,21 +30,24 @@ function Register() {
       return;
     }
 
-    // Perform user existence check (replace with your logic)
-    const userExists = false;
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/userdata/", {
+        user_name: username,
+        email: email,
+        password: password,
+      });
 
-    if (userExists) {
+      console.log("Registration successful:", response.data);
+
+      // Navigate to the user's dashboard after successful registration
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Registration error:", error.response.data);
       setErrors({
         ...errors,
-        general: "Username already exists. Please choose a different one.",
+        general: "An error occurred during registration. Please try again.",
       });
-      return;
     }
-
-    // Perform any Register-related tasks here
-
-    // Navigate to the user's dashboard
-    navigate("/dashboard");
   }
 
   return (
