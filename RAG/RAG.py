@@ -1,21 +1,12 @@
 from unstructured.partition.auto import partition
 from unstructured.chunking.title import chunk_by_title
-from sentence_transformers import SentenceTransformer, util
-from io import BytesIO
-from typing import Tuple, List
-import numpy as np
+from sentence_transformers import SentenceTransformer
 import os
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
 from langchain_community.vectorstores import FAISS
 from dotenv import load_dotenv
 import torch
-from azure.storage.blob import (
-    BlobServiceClient,
-    BlobClient,
-    ContainerClient,
-    ContentSettings,
-)
+from azure.storage.blob import BlobServiceClient
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -34,7 +25,10 @@ def getEmbeddings(text, model_name="all-MiniLM-L6-v2"):
     embeddings = model.encode(text)
     return embeddings
 
-def addPDFtoVectorDB(filepath: str, vector_db: FAISS, user_id: str, model: str = "all-MiniLM-L6-v2") -> None:
+
+def addPDFtoVectorDB(
+    filepath: str, vector_db: FAISS, user_id: str, model: str = "all-MiniLM-L6-v2"
+) -> None:
     """
     Adds the content of a PDF file to a vector database, partitioning the PDF into chunks and embedding each chunk.
 
@@ -96,6 +90,7 @@ def addPDFtoVectorDB(filepath: str, vector_db: FAISS, user_id: str, model: str =
             metadatas=metadatax,
             ids=idx,
         )
+
 
 def upload_folder_to_blob(
     account_name: str,
@@ -242,6 +237,7 @@ def init_vector_db(
 
     return vectorstore_faiss
 
+
 def load_vector_db(user_id, chat_id, root_folder="VectorDBs") -> FAISS:
     """
     Loads a FAISS vector database from a local directory.
@@ -324,6 +320,7 @@ def search_and_return_top_k(query, vectordb, k):
         results.append(result)
     return results
 
+
 if __name__ == "__main__":
     load_dotenv()
     account_name = os.getenv("account_name")
@@ -334,9 +331,9 @@ if __name__ == "__main__":
     print("Container Name:", container_name)
 
     pdf_path = "../DATA/AgileDesignDocument.pdf"
-    user_id = "User_1" # Unique identifier for the user
-    chat_id = "Chat_1" # Unique identifier for the chat
-    query = "What is StudySphere?" # Query text to search for
+    user_id = "User_1"  # Unique identifier for the user
+    chat_id = "Chat_1"  # Unique identifier for the chat
+    query = "What is StudySphere?"  # Query text to search for
 
     # Initialize the vector database
     vectordb = init_vector_db(user_id, chat_id)
