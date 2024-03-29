@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 #         fields = ["user_name", "password", "user_id", "email"]
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
+<<<<<<< HEAD
         model = User
         fields = ["id", "username", "email", "password"]
         extra_kwargs = {"password": {"write_only": True}}
@@ -23,3 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
             password=password
         )
         return user
+=======
+        model = UserData
+        fields = '__all__'
+>>>>>>> 33d12a0bd9b9d19857b4f2576f4a3122544e1f36
