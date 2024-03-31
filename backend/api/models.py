@@ -10,6 +10,14 @@ from django.contrib.auth.models import User
 
 #     def __str__(self) -> str:
 #       return f"{self.user_name} , {self.user_id} , {self.email}"
+class Subjects(models.Model):
+    subject_name = models.CharField(max_length=100)
+    sub_type = models.CharField(max_length=100)
+    author = models.ForeignKey(User,on_delete=models.CASCADE,related_name="subjects")
+
+    def __str__(self):
+        return f"{self.subject_name} {self.sub_type} {self.author}" 
+    
 class Notes(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextFielde()
@@ -17,4 +25,4 @@ class Notes(models.Model):
     author = models.ForeignKey(User,on_delete=models.CASCADE,related_name="notes")
 
     def __str__(self):
-        return self.title
+        return f"{self.title} {self.author}"
