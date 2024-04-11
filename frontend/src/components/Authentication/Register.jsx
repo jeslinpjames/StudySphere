@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"; // Import Axios
+import api from "../../api";
 
 function Register() {
   const [username, setUsername] = useState("");
@@ -31,8 +32,8 @@ function Register() {
     }
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/userdata/", {
-        user_name: username,
+      const response = await api.post("api/user/register/", {
+        username: username,
         email: email,
         password: password,
       });
@@ -40,7 +41,7 @@ function Register() {
       console.log("Registration successful:", response.data);
 
       // Navigate to the user's dashboard after successful registration
-      navigate("/dashboard");
+      navigate("/login");
     } catch (error) {
       console.error("Registration error:", error.response.data);
       setErrors({
