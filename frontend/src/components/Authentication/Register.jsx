@@ -32,7 +32,7 @@ function Register() {
     }
 
     try {
-      const response = await api.post("api/user/register/", {
+      const response = await api.post("/api/user/register/", {
         username: username,
         email: email,
         password: password,
@@ -40,7 +40,7 @@ function Register() {
 
       console.log("Registration successful:", response.data);
 
-      // Navigate to the user's dashboard after successful registration
+      // Navigate to the user's login after successful registration
       navigate("/login");
     } catch (error) {
       console.error("Registration error:", error.response.data);
