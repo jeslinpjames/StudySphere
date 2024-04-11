@@ -59,4 +59,5 @@ class SubjectDelete(generics.DestroyAPIView):
 
     def get_queryset(self):
         user = self.request.user
+        # subject = must get subject from user to delete that subject
         return Subjects.objects.filter(author = user)
