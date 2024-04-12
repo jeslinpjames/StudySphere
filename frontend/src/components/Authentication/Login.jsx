@@ -1,22 +1,32 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../../api";
+import { ACCESS_TOKEN } from "../../constants";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  function handleLogin() {
+  const handleLogin = async (e) => {
     // Check if both username and password have values
+    e.preventDefault();
     if (username && password) {
       // Perform any login-related tasks here
       // Then navigate to the desired page
-      navigate("/");
+      try {
+        const res = await api.post("/api/token/", { username, password });
+        localStorage.setItem(ACCESS_TOKEN, res.data.access);
+        localStorage.setItem(ACCESS_TOKEN, res.data.refresh);
+        navigate("/home");
+      } catch (error) {
+        alert(error);
+      }
     } else {
       // You may want to provide some feedback to the user (e.g., show an error message)
       console.log("Please enter both username and password");
     }
-  }
+  };
 
   return (
     <div className="grid grid-cols-1 h-screen w-full">
