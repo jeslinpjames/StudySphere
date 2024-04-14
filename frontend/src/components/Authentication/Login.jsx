@@ -12,7 +12,7 @@ function Login() {
     // Check if both username and password have values
     e.preventDefault();
     if (username && password) {
-      // Perform any login-related tasks here
+      // Perform any login-related tasks
       // Then navigate to the desired page
       try {
         const res = await api.post("/api/token/", { username, password });

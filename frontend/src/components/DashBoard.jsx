@@ -1,5 +1,5 @@
-import { Link, useMatch, useNavigate } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import Login from "./Authentication/Login";
 // to add color on active links
 function DashBoard() {
   const navigate = useNavigate();
@@ -7,7 +7,8 @@ function DashBoard() {
     // Perform any logout-related tasks here (e.g., clearing user data)
     // Then navigate to the login page
     localStorage.clear();
-    navigate("/login");
+    // console.log("local storage cleared");
+    // navigate("/login");
   }
 
   const isActive = (path) => {
