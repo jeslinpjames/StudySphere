@@ -4,6 +4,8 @@ import api from "../../api";
 
 function Notes() {
   const [subjects, setSubjects] = useState(sampleSubjects);
+
+  // get user specific subjects
   const getSubjects = () => {
     api
       .get("/api/subjects")

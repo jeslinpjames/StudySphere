@@ -41,7 +41,6 @@ class SubjectListCreate(generics.ListCreateAPIView):
     serializer_class = SubjectSerializer
     permission_classes = [IsAuthenticated]
     
-
     def get_queryset(self):
         user = self.request.user
         return Subjects.objects.filter(author = user)
