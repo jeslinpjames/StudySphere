@@ -40,6 +40,7 @@ class NoteDelete(generics.DestroyAPIView):
 class SubjectListCreate(generics.ListCreateAPIView):
     serializer_class = SubjectSerializer
     permission_classes = [IsAuthenticated]
+    
 
     def get_queryset(self):
         user = self.request.user
