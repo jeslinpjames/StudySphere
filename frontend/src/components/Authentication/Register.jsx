@@ -31,24 +31,24 @@ function Register() {
       return;
     }
 
-    try {
-      const response = await api.post("/api/user/register/", {
-        username: username,
-        email: email,
-        password: password,
-      });
+    // try {
+    //   const response = await api.post("/api/user/register/", {
+    //     username: username,
+    //     email: email,
+    //     password: password,
+    //   });
 
-      console.log("Registration successful:", response.data);
+    //   console.log("Registration successful:", response.data);
 
-      // Navigate to the user's login after successful registration
-      navigate("/login");
-    } catch (error) {
-      console.error("Registration error:", error.response.data);
-      setErrors({
-        ...errors,
-        general: "An error occurred during registration. Please try again.",
-      });
-    }
+    //   // Navigate to the user's login after successful registration
+    //   navigate("/login");
+    // } catch (error) {
+    //   console.error("Registration error:", error.response.data);
+    //   setErrors({
+    //     ...errors,
+    //     general: "An error occurred during registration. Please try again.",
+    //   });
+    // }
   }
 
   return (

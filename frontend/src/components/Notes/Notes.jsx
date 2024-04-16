@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from "react";
 import NotesSubList from "./NotesSubList";
 import api from "../../api";
+import axios from "axios";
 
 function Notes() {
   const [subjects, setSubjects] = useState(sampleSubjects);
 
   // get user specific subjects
-  const getSubjects = () => {
-    api
-      .get("/api/subjects")
-      .then((res) => {
-        setSubjects(res.data);
-        console.log(res.data);
-      })
-      .catch((err) => alert(err));
-  };
+  // const getSubjects = async () => {
+  //   await api
+  //     .get("/api/subjects")
+  //     .then((res) => {
+  //       setSubjects(res.data);
+  //       console.log(res.data);
+  //     })
+  //     .catch((err) => alert(err));
+  // };
 
-  useEffect(() => {
-    getSubjects();
-  }, []);
+  // useEffect(() => {
+  //   getSubjects();
+  // }, []);
 
   return (
     <div className="m-5">

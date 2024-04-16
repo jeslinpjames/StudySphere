@@ -31,7 +31,7 @@ const NotesSubList = ({ subjects, setSubjects }) => {
     // };
 
     api
-      .post("api/subjects", { newTopicName, sub_type: "note", author: "nntt" })
+      .post("api/subjects", { newTopicName, sub_type: "note" })
       .then((response) => {
         if (response.status === 200) {
           alert("note created");
@@ -41,7 +41,7 @@ const NotesSubList = ({ subjects, setSubjects }) => {
         }
       })
       .catch((error) => {
-        console.error("Error creating new subject:", error);
+        console.log("Error creating new subject:", error);
         setWarning("Failed to create new subject");
       });
   };
