@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaTrash, FaEdit } from "react-icons/fa";
+import api from "../../api";
 
 const NotesSubList = ({ subjects, setSubjects }) => {
   const [selectedSubject, setSelectedSubject] = useState(null);
@@ -22,11 +23,27 @@ const NotesSubList = ({ subjects, setSubjects }) => {
       return;
     }
 
-    setWarning("");
-    const newSubject = { name: newTopicName };
-    setSubjects([...subjects, newSubject]);
-    navigate(`/notes/${newSubject.name}`);
-    setNewTopicName("");
+    // setWarning("");
+    // const newSubject = {
+    //   subject_name: newTopicName,
+    //   sub_type: "note", // You need to decide what value to use here
+    //   author: "nntt", // Assuming currentUserId is the ID of the current user
+    // };
+
+    api
+      .post("api/subjects", { newTopicName, sub_type: "note", author: "nntt" })
+      .then((response) => {
+        if (response.status === 200) {
+          alert("note created");
+          setSubjects([...subjects, newTopicName]);
+          // navigate(`/notes/${newSubject.subject_name}`);
+          setNewTopicName("");
+        }
+      })
+      .catch((error) => {
+        console.error("Error creating new subject:", error);
+        setWarning("Failed to create new subject");
+      });
   };
 
   const handleEditTopicSubmit = (event) => {
@@ -56,10 +73,18 @@ const NotesSubList = ({ subjects, setSubjects }) => {
     document.getElementById("my_modal_3").close();
   };
 
+  // subject deletion
   const handleDeleteSubject = (subjectName) => {
     const updatedSubjects = subjects.filter(
       (subject) => subject.name !== subjectName
     );
+    api
+      .delete(`subjects/delete/${subjectName}/`)
+      .then((res) => {
+        if (res.status === 204) alert("note deleted");
+        else alert("error");
+      })
+      .catch((error) => alert(error));
     setSubjects(updatedSubjects);
   };
 
