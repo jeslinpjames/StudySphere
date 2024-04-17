@@ -30,20 +30,20 @@ const NotesSubList = ({ subjects, setSubjects }) => {
     //   author: "nntt", // Assuming currentUserId is the ID of the current user
     // };
 
-    api
-      .post("api/subjects", { newTopicName, sub_type: "note" })
-      .then((response) => {
-        if (response.status === 200) {
-          alert("note created");
-          setSubjects([...subjects, newTopicName]);
-          // navigate(`/notes/${newSubject.subject_name}`);
-          setNewTopicName("");
-        }
-      })
-      .catch((error) => {
-        console.log("Error creating new subject:", error);
-        setWarning("Failed to create new subject");
-      });
+    // api
+    //   .post("api/subjects", { newTopicName, sub_type: "note" })
+    //   .then((response) => {
+    //     if (response.status === 200) {
+    //       alert("note created");
+    //       setSubjects([...subjects, newTopicName]);
+    //       // navigate(`/notes/${newSubject.subject_name}`);
+    //       setNewTopicName("");
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.log("Error creating new subject:", error);
+    //     setWarning("Failed to create new subject");
+    //   });
   };
 
   const handleEditTopicSubmit = (event) => {
@@ -78,13 +78,13 @@ const NotesSubList = ({ subjects, setSubjects }) => {
     const updatedSubjects = subjects.filter(
       (subject) => subject.name !== subjectName
     );
-    api
-      .delete(`subjects/delete/${subjectName}/`)
-      .then((res) => {
-        if (res.status === 204) alert("note deleted");
-        else alert("error");
-      })
-      .catch((error) => alert(error));
+    // api
+    //   .delete(`subjects/delete/${subjectName}/`)
+    //   .then((res) => {
+    //     if (res.status === 204) alert("note deleted");
+    //     else alert("error");
+    //   })
+    //   .catch((error) => alert(error));
     setSubjects(updatedSubjects);
   };
 
