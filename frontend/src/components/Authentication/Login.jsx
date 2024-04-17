@@ -13,18 +13,18 @@ function Login() {
     e.preventDefault();
     if (username && password) {
       // Perform any login-related tasks
-      // Then navigate to the desired page
-      try {
-        const res = await api.post("/api/token/", { username, password });
-        localStorage.setItem(ACCESS_TOKEN, res.data.access);
-        localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-        navigate("/home");
-      } catch (error) {
-        alert(error);
-      }
-    } else {
-      // You may want to provide some feedback to the user (e.g., show an error message)
-      console.log("Please enter both username and password");
+      //   // Then navigate to the desired page
+      //   try {
+      //     const res = await api.post("/api/token/", { username, password });
+      //     localStorage.setItem(ACCESS_TOKEN, res.data.access);
+      //     localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+      //     navigate("/home");
+      //   } catch (error) {
+      //     alert(error);
+      //   }
+      // } else {
+      //   // You may want to provide some feedback to the user (e.g., show an error message)
+      //   console.log("Please enter both username and password");
     }
   };
 

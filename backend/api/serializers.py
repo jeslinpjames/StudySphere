@@ -9,15 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
-        username = validated_data.get('username')
-        email = validated_data.get('email')
-        password = validated_data.get('password')
-
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password
-        )
+        user = User.objects.create_user(**validated_data)
         return user
 
 class NoteSerializer(serializers.ModelSerializer):
@@ -29,6 +21,6 @@ class NoteSerializer(serializers.ModelSerializer):
 class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subjects
-        fields = ["id","subject_name","subject_type","author"]
+        fields = ["id","subject_name","sub_type","author"]
         extra_kwargs = {"author":{"read_only":True}}
 
