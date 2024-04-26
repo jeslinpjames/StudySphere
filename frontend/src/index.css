@@ -1,3 +1,78 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.container {
+  max-width: 960px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 15px;
+  padding-left: 15px;
+  min-height: 100vh;
+}
+
+.note {
+  background-color: #feffff;
+  border-radius: 10px;
+  padding: 1rem;
+  min-height: 170px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  white-space: pre-wrap;
+}
+
+.note-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notes-list {
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.note.new {
+  background-color: #091716;
+}
+
+textarea {
+  border: none;
+  resize: none;
+  background-color: #091716;
+}
+textarea:focus {
+  outline: none;
+}
+.save {
+  background-color: #0954a3;
+  border: none;
+  border-radius: 15px;
+  padding: 5px 10px 5px 10px;
+}
+.save:hover {
+  background-color: #e5e5e6;
+  cursor: pointer;
+}
+.delete-icon {
+  cursor: pointer;
+}
+.search {
+  display: flex;
+  align-items: center;
+  background-color: rgb(100, 124, 133);
+  border-radius: 10px;
+  padding: 5px;
+  margin-bottom: 1.5em;
+}
+.search input {
+  border: none;
+  background-color: rgb(100, 124, 133);
+  width: 100%;
+}
+
+.search input:focus {
+  outline: none;
+}

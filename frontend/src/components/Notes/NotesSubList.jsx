@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaTrash, FaEdit } from "react-icons/fa";
 
-const QuizSubjectList = ({ subjects, setSubjects }) => {
+const NotesSubList = ({ subjects, setSubjects }) => {
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [newTopicName, setNewTopicName] = useState("");
   const [editTopicName, setEditTopicName] = useState("");
@@ -25,7 +25,7 @@ const QuizSubjectList = ({ subjects, setSubjects }) => {
     setWarning("");
     const newSubject = { name: newTopicName };
     setSubjects([...subjects, newSubject]);
-    navigate(`/quiz/${newSubject.name}`);
+    navigate(`/notes/${newSubject.name}`);
     setNewTopicName("");
   };
 
@@ -64,9 +64,9 @@ const QuizSubjectList = ({ subjects, setSubjects }) => {
   };
 
   return (
-    <div className="flex flex-col ">
-      <h1 className="text-center p-3 text-3xl font-bold ">Topics</h1>
-      <div className="card-grid ">
+    <div className="flex flex-col">
+      <h1 className="text-center p-3 text-3xl font-bold">Topics</h1>
+      <div className="card-grid">
         {subjects.map((subject, index) => (
           <div
             key={index}
@@ -74,7 +74,7 @@ const QuizSubjectList = ({ subjects, setSubjects }) => {
           >
             <Link
               className="cursor-pointer"
-              to={`/quiz/${subject.name}`}
+              to={`/notes/${subject.name}`}
               onClick={() => setSelectedSubject(subject)}
             >
               {subject.name}
@@ -162,4 +162,4 @@ const QuizSubjectList = ({ subjects, setSubjects }) => {
   );
 };
 
-export default QuizSubjectList;
+export default NotesSubList;

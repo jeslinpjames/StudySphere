@@ -1,0 +1,4 @@
+node_modules
+RAG/.env
+VectorDBs
+DATA

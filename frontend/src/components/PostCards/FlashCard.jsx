@@ -9,7 +9,11 @@ function FlashCard() {
   return (
     <>
       <div className="m-5">
-        <SubjectList subjects={subjects} flashcards={flashCards} />
+        <SubjectList
+          subjects={subjects}
+          setSubjects={setSubjects}
+          flashcards={flashCards}
+        />
       </div>
     </>
   );

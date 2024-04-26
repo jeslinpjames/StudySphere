@@ -6,17 +6,19 @@ function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  function handleLogin() {
+  const handleLogin = async (e) => {
     // Check if both username and password have values
+    e.preventDefault();
     if (username && password) {
-      // Perform any login-related tasks here
+      // Perform any login-related tasks
       // Then navigate to the desired page
-      navigate("/");
+
+      navigate("/home");
     } else {
       // You may want to provide some feedback to the user (e.g., show an error message)
       console.log("Please enter both username and password");
     }
-  }
+  };
 
   return (
     <div className="grid grid-cols-1 h-screen w-full">
